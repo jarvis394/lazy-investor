@@ -3,7 +3,6 @@ import { HttpAdapterHost, NestFactory } from '@nestjs/core'
 import { AppModule } from './app/app.module'
 import { ConfigService } from './config/config.service'
 import { NestExpressApplication } from '@nestjs/platform-express'
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { PrismaClientExceptionFilter } from './filters/prisma-client-exception.filter'
 
 async function bootstrap() {
@@ -19,21 +18,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe())
   app.setGlobalPrefix(globalPrefix)
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter))
-
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('nestjs-prisma-boilerplate')
-    .setDescription('Basic notes application, with tag support')
-    .setVersion('1.0')
-    .addTag('auth')
-    .addTag('user')
-    .addTag('note')
-    .addTag('tag')
-    .addBearerAuth()
-    .build()
-  const document = SwaggerModule.createDocument(app, swaggerConfig, {
-    deepScanRoutes: true,
-  })
-  SwaggerModule.setup('api', app, document)
 
   await app.listen(config.PORT)
   Logger.log(
