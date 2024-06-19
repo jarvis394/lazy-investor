@@ -2,11 +2,17 @@ import { Logger, ValidationPipe, VersioningType } from '@nestjs/common'
 import { HttpAdapterHost, NestFactory } from '@nestjs/core'
 import { AppModule } from './app/app.module'
 import { ConfigService } from './config/config.service'
-import { NestExpressApplication } from '@nestjs/platform-express'
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify'
 import { PrismaClientExceptionFilter } from './filters/prisma-client-exception.filter'
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule)
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter()
+  )
   const config = app.get(ConfigService)
   const { httpAdapter } = app.get(HttpAdapterHost)
   const globalPrefix = 'api'

@@ -1,10 +1,8 @@
 import { Logger, Module } from '@nestjs/common'
-import { AppController } from './app.controller'
+import { AppService } from './app.service'
 import { ConfigModule } from '../config/config.module'
 import { PrismaModule, loggingMiddleware } from 'nestjs-prisma'
 import { ConfigService } from '../config/config.service'
-import { TelegrafModule } from 'nestjs-telegraf'
-import { BotModule } from '../bot/bot.module'
 
 @Module({
   imports: [
@@ -22,16 +20,7 @@ import { BotModule } from '../bot/bot.module'
         ],
       },
     }),
-    TelegrafModule.forRootAsync({
-      inject: [ConfigService],
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        token: configService.TELEGRAM_BOT_KEY,
-      }),
-    }),
-    BotModule,
   ],
-  providers: [ConfigService],
-  controllers: [AppController],
+  providers: [ConfigService, AppService],
 })
 export class AppModule {}

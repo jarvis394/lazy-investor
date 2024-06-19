@@ -7,8 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id           Int     @id @default(autoincrement())
-  telegramId   Int     @unique
-  
+model Pulse {
+  id                        Int      @id @default(autoincrement())
+  telegramId                Int      @unique
+  share                     String
+  shareTag                  String?
+  goal                      String
+  potentialPercentage       String
+  parsedPotentialPercentage Int?
+  timestamp                 DateTime
+  investmentSuccessTime     String?
+  buttonUrl                 String
+  buttonText                String
+}
+
+model Scraper {
+  name                   String @id @default("main")
+  minProcessedTelegramId Int    @default(-1)
+  maxProcessedTelegramId Int    @default(-1)
 }

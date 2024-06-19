@@ -1,0 +1,45 @@
+{
+  "name": "scraper",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/scraper/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/scraper",
+        "main": "apps/scraper/src/main.ts",
+        "tsConfig": "apps/scraper/tsconfig.app.json",
+        "webpackConfig": "apps/scraper/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "scraper:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "scraper:build:development"
+        },
+        "production": {
+          "buildTarget": "scraper:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  },
+  "tags": []
+}
