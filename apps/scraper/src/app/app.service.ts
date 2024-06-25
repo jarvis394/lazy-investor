@@ -3,9 +3,7 @@ import { Api, TelegramClient } from 'telegram'
 import { ConfigService } from '../config/config.service'
 import { StringSession } from 'telegram/sessions'
 import { PrismaService } from 'nestjs-prisma'
-import { Pulse } from '@prisma/client'
-
-type PulseWithoutId = Omit<Pulse, 'id'>
+import { processChannelMessage, PulseWithoutId } from '@app/shared'
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -59,126 +57,6 @@ export class AppService implements OnApplicationBootstrap {
     }
 
     return res
-  }
-
-  async getButtonDataFromMessage(
-    message: Api.Message
-  ): Promise<false | { url: string; text: string }> {
-    if (
-      !message.replyMarkup ||
-      message.replyMarkup.className !== 'ReplyInlineMarkup'
-    ) {
-      this.logger.warn(
-        `Provided message does not have reply markup: ${message.id}, ${message.className}`
-      )
-      return false
-    }
-
-    const firstRow = message.replyMarkup.rows[0]
-    if (!firstRow) {
-      this.logger.warn(
-        `Provided message reply markup does not have rows: ${message.id}, ${message.className}`
-      )
-      return false
-    }
-
-    const firstButton = firstRow.buttons[0]
-    if (!firstButton) {
-      this.logger.warn(
-        `Provided message reply markup does not have buttons: ${message.id}, ${message.className}`
-      )
-      return false
-    }
-
-    if (firstButton.className !== 'KeyboardButtonUrl') {
-      this.logger.warn(
-        `Provided message reply markup is not valid: ${message.id}, ${firstButton.className}`
-      )
-      return false
-    }
-
-    return { url: firstButton.url, text: firstButton.text }
-  }
-
-  async processChannelMessage(
-    message: Api.TypeMessage
-  ): Promise<PulseWithoutId | false> {
-    if (message.className !== 'Message') {
-      this.logger.warn(
-        `Provided message is not valid: ${message.id}, ${message.className}`
-      )
-      return false
-    }
-
-    const button = await this.getButtonDataFromMessage(message)
-
-    if (!button) {
-      this.logger.warn(
-        `Provided message is not valid: ${message.id}, ${message.className}`
-      )
-      return false
-    }
-
-    const text = message.message
-
-    // eslint-disable-next-line no-control-regex
-    const shareTagRegExp = new RegExp('#(?<result>.*)\n', 'gm')
-    const shareTag = shareTagRegExp.exec(text)?.groups?.result?.trim() || null
-    // prettier-ignore
-    // eslint-disable-next-line no-useless-escape
-    const shareRegExp = new RegExp('Инвест-идея по акции[\s*]?(?<result>.*)[\s*]?#', 'gm')
-    const share = shareRegExp.exec(text)?.groups?.result?.trim()
-    // prettier-ignore
-    // eslint-disable-next-line no-useless-escape, no-control-regex
-    const shareWithoutTagRegExp = new RegExp('Инвест-идея по акции[\s*]?(?<result>.*)[.*]?\n', 'gm')
-    const shareWithoutTag = shareWithoutTagRegExp
-      .exec(text)
-      ?.groups?.result?.trim()
-    // prettier-ignore
-    // eslint-disable-next-line no-useless-escape, no-control-regex
-    const goalRegExp = new RegExp('Цель:[\s*]?(?<result>.*)[\s*]?\n', 'gm')
-    const goal = goalRegExp.exec(text)?.groups?.result?.trim()
-    // prettier-ignore
-    // eslint-disable-next-line no-useless-escape, no-control-regex
-    const potentialPercentageRegExp = new RegExp('Потенциал:[\s*]?(?<result>.*)[\s*]?\%', 'gm')
-    const potentialPercentage = potentialPercentageRegExp
-      .exec(text)
-      ?.groups?.result?.trim()
-      .replace(',', '.')
-    const parsedPotentialPercentage = Number(potentialPercentage)
-
-    // prettier-ignore
-    // eslint-disable-next-line no-useless-escape, no-control-regex
-    const investmentSuccessTimeRegExp = new RegExp('Срок реализации:[\s*]?(?<result>.*)[\s*]?', 'gm')
-    const investmentSuccessTime =
-      investmentSuccessTimeRegExp.exec(text)?.groups?.result?.trim() || null
-
-    if ((!share && !shareWithoutTag) || !goal || !potentialPercentage) {
-      this.logger.warn(
-        `Provided message is missing components in text: ${message.id},\n${text}`
-      )
-      this.logger.warn(
-        `Parsed values: share=${share}, shareWithoutTag=${shareWithoutTag}, ` +
-          `shareTag=${shareTag}, goal=${goal}, potentialPercentage=${potentialPercentage}, ` +
-          `investmentSuccessTime=${investmentSuccessTime}`
-      )
-      return false
-    }
-
-    return {
-      share: share || shareWithoutTag || '',
-      shareTag,
-      goal,
-      investmentSuccessTime,
-      potentialPercentage,
-      parsedPotentialPercentage: isNaN(parsedPotentialPercentage)
-        ? null
-        : parsedPotentialPercentage,
-      telegramId: message.id,
-      timestamp: new Date(message.date * 1000),
-      buttonText: button.text,
-      buttonUrl: button.url,
-    }
   }
 
   async savePulses(pulses: PulseWithoutId[]) {
@@ -235,7 +113,7 @@ export class AppService implements OnApplicationBootstrap {
 
     const messagesPromises: Array<Promise<PulseWithoutId | false>> = []
     messages.forEach(async (message) => {
-      messagesPromises.push(this.processChannelMessage(message))
+      messagesPromises.push(processChannelMessage(message))
     })
 
     let newMaxProcessedTelegramId = this.maxProcessedTelegramId

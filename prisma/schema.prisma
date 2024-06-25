@@ -9,7 +9,7 @@ datasource db {
 
 model Pulse {
   id                        Int      @id @default(autoincrement())
-  telegramId                Int      @unique
+  telegramId                Int      @unique(sort: Desc)
   share                     String
   shareTag                  String?
   goal                      String

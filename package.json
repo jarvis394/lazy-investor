@@ -8,6 +8,7 @@
   "scripts": {
     "dev:front": "yarn nx run frontend:serve",
     "dev:back": "yarn nx run backend:serve",
+    "dev:scraper": "yarn nx run scraper:serve",
     "dev": "yarn nx run-many -t serve -p frontend backend",
     "build:front": "yarn nx run frontend:build",
     "build:back": "yarn nx run backend:build",
