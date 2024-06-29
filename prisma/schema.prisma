@@ -14,7 +14,7 @@ model Pulse {
   shareTag                  String?
   goal                      String
   potentialPercentage       String
-  parsedPotentialPercentage Int?
+  parsedPotentialPercentage Float?
   timestamp                 DateTime
   investmentSuccessTime     String?
   buttonUrl                 String

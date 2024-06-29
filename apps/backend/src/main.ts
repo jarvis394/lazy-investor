@@ -27,7 +27,7 @@ async function bootstrap() {
 
   await app.listen(config.PORT)
   Logger.log(
-    `🚀 Application is running on: http://localhost:${config.PORT}/${globalPrefix}`
+    `🚀 Application is running on: http://localhost:${config.PORT}/${globalPrefix}/v1`
   )
 }
 

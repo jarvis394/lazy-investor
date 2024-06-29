@@ -5,6 +5,7 @@ import { PrismaModule } from 'nestjs-prisma'
 import { ConfigService } from '../config/config.service'
 import { TelegrafModule } from 'nestjs-telegraf'
 import { BotModule } from '../bot/bot.module'
+import { PulseModule } from '../pulse/pulse.module'
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { BotModule } from '../bot/bot.module'
       }),
     }),
     BotModule,
+    PulseModule,
   ],
   providers: [ConfigService],
   controllers: [AppController],

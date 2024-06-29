@@ -69,7 +69,6 @@ export const getButtonDataFromTelegrafMessage = (
     return false
   }
 
-  console.log(firstButton)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   return { url: firstButton.url, text: firstButton.text }
@@ -100,7 +99,7 @@ export const processMessageText = (text: string) => {
     .exec(text)
     ?.groups?.result?.trim()
     .replace(',', '.')
-  const parsedPotentialPercentage = Number(potentialPercentage)
+  const parsedPotentialPercentage = parseFloat(potentialPercentage || '')
 
   // prettier-ignore
   // eslint-disable-next-line no-useless-escape, no-control-regex
