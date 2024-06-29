@@ -9,10 +9,25 @@ const router = createBrowserRouter([
   },
   {
     path: '/page/:page',
+    caseSensitive: true,
+    element: <Main />,
+  },
+  {
+    path: '/tag/:tag',
+    caseSensitive: true,
+    element: <Main />,
+  },
+  {
+    path: '/tag/:tag/page/:page',
+    caseSensitive: true,
     element: <Main />,
   },
   {
     path: '/404',
+    element: <NotFound />,
+  },
+  {
+    path: '*',
     element: <NotFound />,
   },
 ])

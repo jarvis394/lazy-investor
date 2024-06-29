@@ -17,6 +17,10 @@ const Root = styled('div')(({ theme }) => ({
   borderRadius: 30,
   padding: theme.spacing(2.5),
   background: 'var(--cardBackground)',
+  transition: theme.transitions.create('all', {
+    easing: 'ease',
+    duration: theme.transitions.duration.short,
+  }),
   [theme.breakpoints.up('sm')]: {
     gap: theme.spacing(7.5),
   },
@@ -28,8 +32,8 @@ const Header = styled('div')(({ theme }) => ({
   alignItems: 'flex-start',
   display: 'flex',
   gap: theme.spacing(2.5),
+  width: 'calc(100% - 92px)',
   [theme.breakpoints.up('sm')]: {
-    alignItems: 'center',
     flexDirection: 'row',
   },
 }))
@@ -56,6 +60,9 @@ const Share = styled('h2')(() => ({
   fontWeight: 400,
   fontSize: 24,
   letterSpacing: '0.03em',
+  minHeight: 48,
+  alignItems: 'center',
+  display: 'flex',
 }))
 
 const Timestamp = styled('span')(({ theme }) => ({
@@ -126,15 +133,10 @@ const PotentialPercentage = styled('p')(({ theme }) => ({
   },
 }))
 
-type BaseCardProps =
-  | {
-      skeleton: true
-      pulse?: never
-    }
-  | {
-      pulse: Pulse
-      skeleton?: never
-    }
+type BaseCardProps = {
+  skeleton?: boolean
+  pulse?: Pulse
+}
 
 export type CardProps = BaseCardProps &
   React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
@@ -148,7 +150,7 @@ const Card: React.FC<CardProps> = ({
 }) => {
   const theme = useTheme()
   const cardBackground = useMemo(() => {
-    if (skeleton) {
+    if (skeleton || !pulse?.share) {
       return theme.palette.buttonHint.main
     }
 
@@ -179,10 +181,10 @@ const Card: React.FC<CardProps> = ({
 
       <Header>
         <Tag>
-          {skeleton ? <Skeleton width={38} height={16} /> : pulse.shareTag}
+          {skeleton ? <Skeleton width={38} height={16} /> : pulse?.shareTag}
         </Tag>
         <Share>
-          {skeleton ? <Skeleton width={128} height={36} /> : pulse.share}
+          {skeleton ? <Skeleton width={128} height={36} /> : pulse?.share}
         </Share>
       </Header>
 
@@ -195,7 +197,7 @@ const Card: React.FC<CardProps> = ({
             {skeleton ? (
               <Skeleton width={'70%'} height={80} />
             ) : (
-              pulse.potentialPercentage + '%'
+              pulse?.potentialPercentage + '%'
             )}
           </PotentialPercentage>
         </Item>
@@ -204,7 +206,7 @@ const Card: React.FC<CardProps> = ({
             <Label>
               {skeleton ? <Skeleton width={32} height={16} /> : 'Цель'}
             </Label>
-            {skeleton ? <Skeleton width={'50%'} height={50} /> : pulse.goal}
+            {skeleton ? <Skeleton width={'50%'} height={50} /> : pulse?.goal}
           </Item>
           {(pulse?.investmentSuccessTime || skeleton) && (
             <Item>
@@ -218,7 +220,7 @@ const Card: React.FC<CardProps> = ({
               {skeleton ? (
                 <Skeleton width={100} height={50} />
               ) : (
-                pulse.investmentSuccessTime
+                pulse?.investmentSuccessTime
               )}
             </Item>
           )}
@@ -247,4 +249,4 @@ const Card: React.FC<CardProps> = ({
   )
 }
 
-export default Card
+export default React.memo(Card)

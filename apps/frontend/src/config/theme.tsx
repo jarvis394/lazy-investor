@@ -51,7 +51,7 @@ export const theme = createTheme({
     },
     buttonHint: {
       main: 'rgba(0, 0, 0, 0.05)',
-      hovered: 'rgba(0, 0, 0, 0.23)',
+      hovered: 'rgba(0, 0, 0, 0.16)',
     },
     background: {
       default: '#FFFFFF',

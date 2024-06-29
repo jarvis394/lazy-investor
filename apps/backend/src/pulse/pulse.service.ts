@@ -11,20 +11,24 @@ export class PulseService {
 
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getPage(page: number): Promise<PulseGetPageRes> {
+  async getPage(page: number, filter: string): Promise<PulseGetPageRes> {
     const currentPage = page - 1
 
     if (currentPage < 0) {
       throw new BadRequestException('Page number should be higher than 1')
     }
 
+    const whereCondition = filter ? { shareTag: filter } : {}
     const pulses = await this.prismaService.pulse.findMany({
+      where: whereCondition,
       orderBy: { telegramId: 'desc' },
       take: PulseService.DEFAULT_GET_LIST_LIMIT,
       skip: currentPage * PulseService.DEFAULT_GET_LIST_LIMIT,
     })
 
-    const count = await this.prismaService.pulse.count()
+    const count = await this.prismaService.pulse.count({
+      where: whereCondition,
+    })
     const pulsesPagesCount = Math.ceil(
       count / PulseService.DEFAULT_GET_LIST_LIMIT
     )

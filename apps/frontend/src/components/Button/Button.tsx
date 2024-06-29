@@ -71,7 +71,7 @@ const Root = styled(ButtonBase)(({ theme }) => ({
   },
 }))
 
-type ButtonProps = ButtonBaseProps & {
+export type ButtonProps = ButtonBaseProps & {
   variant?: 'contrast' | 'primary' | 'secondary'
   fullWidth?: boolean
 }
@@ -97,4 +97,4 @@ const Button: React.FC<ButtonProps> = ({
   )
 }
 
-export default Button
+export default React.memo(Button)

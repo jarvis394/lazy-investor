@@ -1,10 +1,9 @@
 import React from 'react'
 import { AppBar as AppBarBase, styled } from '@mui/material'
 import Logo from '../svg/Logo'
-import CopyRight from '../svg/CopyRight'
 import Search from '../svg/Search'
 import { APP_MIN_WIDTH } from '../../config/constants'
-import IconButton from '../IconButton/IconButton'
+import EmailContainer from '../EmailContainer/EmailContainer'
 import Input from '../Input/Input'
 import Button from '../Button/Button'
 import { useNavigate } from 'react-router-dom'
@@ -72,14 +71,6 @@ const Title = styled('h1')(({ theme }) => ({
   },
 }))
 
-const EmailContainer = styled(Container)(({ theme }) => ({
-  gap: theme.spacing(2),
-  display: 'none',
-  [theme.breakpoints.up('xl')]: {
-    display: 'flex',
-  },
-}))
-
 const StyledSearchIcon = styled(Search)(() => ({
   display: 'flex',
   flexShrink: 0,
@@ -129,12 +120,7 @@ const AppBar: React.FC = () => {
           <StyledLogo />
           <Title>Ленивый инвестор</Title>
         </LogoContainer>
-        <EmailContainer>
-          Dmitriy-gri@bk.ru
-          <IconButton>
-            <CopyRight />
-          </IconButton>
-        </EmailContainer>
+        <EmailContainer visibleOnXL />
         <Container>
           <SearchButton variant="secondary">
             <StyledSearchIcon />

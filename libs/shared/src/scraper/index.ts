@@ -75,35 +75,25 @@ export const getButtonDataFromTelegrafMessage = (
 }
 
 export const processMessageText = (text: string) => {
-  // eslint-disable-next-line no-control-regex
-  const shareTagRegExp = new RegExp('#(?<result>.*)\n', 'gm')
+  const shareTagRegExp = /#(?<result>[\w]*)/gm
   const shareTag = shareTagRegExp.exec(text)?.groups?.result?.trim() || null
-  // prettier-ignore
-  // eslint-disable-next-line no-useless-escape
-  const shareRegExp = new RegExp('Инвест-идея по акции[\s*]?(?<result>.*)[\s*]?#', 'gm')
+  const shareRegExp = /Инвест-идея по акции[\s*]?(?<result>.*)[\s*]?#/gm
   const share = shareRegExp.exec(text)?.groups?.result?.trim()
-  // prettier-ignore
-  // eslint-disable-next-line no-useless-escape, no-control-regex
-  const shareWithoutTagRegExp = new RegExp('Инвест-идея по акции[\s*]?(?<result>.*)[.*]?\n', 'gm')
+  const shareWithoutTagRegExp =
+    /Инвест-идея по акции[\s*]?(?<result>.*)[.*]?\n/gm
   const shareWithoutTag = shareWithoutTagRegExp
     .exec(text)
     ?.groups?.result?.trim()
-  // prettier-ignore
-  // eslint-disable-next-line no-useless-escape, no-control-regex
-  const goalRegExp = new RegExp('Цель:[\s*]?(?<result>.*)[\s*]?\n', 'gm')
+  const goalRegExp = /Цель:[\s*]?(?<result>.*)[\s*]?\n/gm
   const goal = goalRegExp.exec(text)?.groups?.result?.trim()
-  // prettier-ignore
-  // eslint-disable-next-line no-useless-escape, no-control-regex
-  const potentialPercentageRegExp = new RegExp('Потенциал:[\s*]?(?<result>.*)[\s*]?\%', 'gm')
+  const potentialPercentageRegExp = /Потенциал:[\s*]?(?<result>.*)[\s*]?%/gm
   const potentialPercentage = potentialPercentageRegExp
     .exec(text)
     ?.groups?.result?.trim()
     .replace(',', '.')
   const parsedPotentialPercentage = parseFloat(potentialPercentage || '')
-
-  // prettier-ignore
-  // eslint-disable-next-line no-useless-escape, no-control-regex
-  const investmentSuccessTimeRegExp = new RegExp('Срок реализации:[\s*]?(?<result>.*)[\s*]?', 'gm')
+  const investmentSuccessTimeRegExp =
+    /Срок реализации:[\s*]?(?<result>.*)[\s*]?/gm
   const investmentSuccessTime =
     investmentSuccessTimeRegExp.exec(text)?.groups?.result?.trim() || null
 

@@ -6,6 +6,7 @@ import { ConfigService } from '../config/config.service'
 import { TelegrafModule } from 'nestjs-telegraf'
 import { BotModule } from '../bot/bot.module'
 import { PulseModule } from '../pulse/pulse.module'
+import { ShareModule } from '../share/share.module'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PulseModule } from '../pulse/pulse.module'
     }),
     BotModule,
     PulseModule,
+    ShareModule,
   ],
   providers: [ConfigService],
   controllers: [AppController],

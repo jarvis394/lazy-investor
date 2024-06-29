@@ -1,3 +1,4 @@
+import React from 'react'
 import { InputBase, alpha, styled } from '@mui/material'
 
 const Input = styled(InputBase)(({ theme }) => ({
@@ -32,4 +33,4 @@ const Input = styled(InputBase)(({ theme }) => ({
   },
 }))
 
-export default Input
+export default React.memo(Input)
