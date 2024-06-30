@@ -4,6 +4,8 @@ import { ConfigService as BaseConfigService } from '@nestjs/config'
 type EnvSchema = {
   PORT: string
   DATABASE_URL: string
+  REDIS_URL: string
+  CACHE_TTL: string
   TELEGRAM_BOT_KEY: string
 }
 
@@ -21,5 +23,13 @@ export class ConfigService {
 
   get TELEGRAM_BOT_KEY() {
     return this.configService.getOrThrow('TELEGRAM_BOT_KEY')
+  }
+
+  get CACHE_TTL() {
+    return Number(this.configService.get('CACHE_TTL')) || 60
+  }
+
+  get REDIS_URL() {
+    return this.configService.getOrThrow('REDIS_URL')
   }
 }

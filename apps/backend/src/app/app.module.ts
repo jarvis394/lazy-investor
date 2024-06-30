@@ -7,6 +7,10 @@ import { TelegrafModule } from 'nestjs-telegraf'
 import { BotModule } from '../bot/bot.module'
 import { PulseModule } from '../pulse/pulse.module'
 import { ShareModule } from '../share/share.module'
+import { redisStore } from 'cache-manager-redis-yet'
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager'
+import { APP_INTERCEPTOR } from '@nestjs/core'
+import type { RedisClientOptions } from 'redis'
 
 @Module({
   imports: [
@@ -23,11 +27,28 @@ import { ShareModule } from '../share/share.module'
         token: configService.TELEGRAM_BOT_KEY,
       }),
     }),
+    CacheModule.registerAsync<RedisClientOptions>({
+      inject: [ConfigService],
+      imports: [ConfigModule],
+      isGlobal: true,
+      useFactory: async (configService: ConfigService) => ({
+        store: await redisStore({
+          ttl: configService.CACHE_TTL,
+          url: configService.REDIS_URL,
+        }),
+      }),
+    }),
     BotModule,
     PulseModule,
     ShareModule,
   ],
-  providers: [ConfigService],
+  providers: [
+    ConfigService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
+  ],
   controllers: [AppController],
 })
 export class AppModule {}

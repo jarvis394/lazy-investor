@@ -204,21 +204,21 @@ const Card: React.FC<CardProps> = ({
         <VerticalContainer>
           <Item>
             <Label>
-              {skeleton ? <Skeleton width={32} height={16} /> : 'Цель'}
+              {skeleton ? <Skeleton width={32} height={17} /> : 'Цель'}
             </Label>
-            {skeleton ? <Skeleton width={'50%'} height={50} /> : pulse?.goal}
+            {skeleton ? <Skeleton width={'50%'} height={36} /> : pulse?.goal}
           </Item>
           {(pulse?.investmentSuccessTime || skeleton) && (
             <Item>
               <Label>
                 {skeleton ? (
-                  <Skeleton width={64} height={16} />
+                  <Skeleton width={64} height={17} />
                 ) : (
                   'Срок реализации'
                 )}
               </Label>
               {skeleton ? (
-                <Skeleton width={100} height={50} />
+                <Skeleton width={100} height={36} />
               ) : (
                 pulse?.investmentSuccessTime
               )}
@@ -237,7 +237,7 @@ const Card: React.FC<CardProps> = ({
         fullWidth
       >
         {skeleton ? (
-          <Skeleton width={210} height={20} />
+          <Skeleton width={210} height={30} />
         ) : (
           <>
             {pulse?.buttonText}

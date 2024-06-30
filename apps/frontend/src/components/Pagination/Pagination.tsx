@@ -110,13 +110,16 @@ const PaginationItem: React.FC<PaginationItemProps<'button'>> = ({
   )
 }
 
-const Pagination: React.FC<PaginationProps> = (props) => {
-  return (
-    <StyledMUIPagination
-      renderItem={(item) => <PaginationItem {...item} />}
-      {...props}
-    />
-  )
-}
+const PaginationWithRef = React.forwardRef<HTMLDivElement, PaginationProps>(
+  function Pagination(props, ref) {
+    return (
+      <StyledMUIPagination
+        ref={ref}
+        renderItem={(item) => <PaginationItem {...item} />}
+        {...props}
+      />
+    )
+  }
+)
 
-export default React.memo(Pagination)
+export default React.memo(PaginationWithRef)

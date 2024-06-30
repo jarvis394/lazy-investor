@@ -213,11 +213,15 @@ const Main: React.FC = () => {
               </Fade>
             )}
           </TabsContainer>
-          <Pagination
-            onChange={handlePageChange}
-            page={parsedPage}
-            count={data?.pages}
-          />
+          {data?.pages && (
+            <Fade in>
+              <Pagination
+                onChange={handlePageChange}
+                page={parsedPage}
+                count={data?.pages}
+              />
+            </Fade>
+          )}
         </HorizontalContainer>
         <CardsContainer>
           {dataArray.map((pulse, i) => (
