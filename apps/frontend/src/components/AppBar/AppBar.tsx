@@ -176,7 +176,8 @@ const AppBar: React.FC<AppBarProps> = ({ search }) => {
               onFocus: handleSearchBoxFocus,
               onBlur: handleSearchBoxBlur,
               className: cx('AppBar__search', {
-                'AppBar__search--focused': searchBoxFocused,
+                'AppBar__search--focused':
+                  searchBoxFocused && searchHistory.length !== 0,
               }),
             }}
             defaultValue={search}
