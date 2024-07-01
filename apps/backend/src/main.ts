@@ -24,6 +24,9 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe())
   app.setGlobalPrefix(globalPrefix)
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter))
+  app.enableCors({
+    origin: '*',
+  })
 
   await app.listen(config.PORT, '0.0.0.0')
   const url = await app.getUrl()
