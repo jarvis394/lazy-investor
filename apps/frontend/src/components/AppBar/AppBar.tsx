@@ -1,22 +1,26 @@
-import React from 'react'
-import { AppBar as AppBarBase, styled } from '@mui/material'
+import React, { useState } from 'react'
+import { AppBar as AppBarBase, alpha, styled } from '@mui/material'
 import Logo from '../svg/Logo'
 import Search from '../svg/Search'
 import { APP_MIN_WIDTH } from '../../config/constants'
 import EmailContainer from '../EmailContainer/EmailContainer'
-import Input from '../Input/Input'
 import Button from '../Button/Button'
 import { useNavigate } from 'react-router-dom'
+import SearchBar from '../SearchBar/SearchBar'
+import IconButton from '../IconButton/IconButton'
+import { useAppSelector } from '../../store'
+import SearchIcon from '../../components/svg/Search'
+import cx from 'classnames'
 
 const Root = styled(AppBarBase)(({ theme }) => ({
   background: theme.palette.background.paper,
   minWidth: APP_MIN_WIDTH,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
   flexDirection: 'row',
   padding: theme.spacing(2.5, 2),
   width: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
   [theme.breakpoints.up('md')]: {
     padding: theme.spacing(2.5, 5),
   },
@@ -28,14 +32,6 @@ const StyledLogo = styled(Logo)(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
     height: 56,
   },
-}))
-
-const Content = styled('div')(() => ({
-  width: '100%',
-  height: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
 }))
 
 const Container = styled('div')(({ theme }) => ({
@@ -78,8 +74,9 @@ const StyledSearchIcon = styled(Search)(() => ({
   height: 24,
 }))
 
-const SearchInput = styled(Input)(({ theme }) => ({
+const StyledSearchBar = styled(SearchBar)(({ theme }) => ({
   display: 'none',
+  zIndex: 10,
   [theme.breakpoints.up('sm')]: {
     display: 'flex',
     width: 240,
@@ -88,59 +85,129 @@ const SearchInput = styled(Input)(({ theme }) => ({
     display: 'flex',
     width: 320,
   },
+  '& .AppBar__search': {
+    transitionDuration: '0ms !important',
+  },
+  '& .AppBar__search--focused': {
+    borderBottomLeftRadius: '0 !important',
+    borderBottomRightRadius: '0 !important',
+  },
 }))
 
-const SearchButton = styled(Button)(({ theme }) => ({
-  display: 'flex',
-  padding: theme.spacing(2),
-  borderRadius: 16,
+const SearchButton = styled(IconButton)(({ theme }) => ({
+  borderRadius: 20,
   [theme.breakpoints.up('sm')]: {
     display: 'none',
   },
 }))
 
-const ChannelLinkButton = styled(Button)(({ theme }) => ({
-  padding: theme.spacing(2.25, 2.5),
-  lineHeight: '20px',
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(2.5, 3),
-  },
+const SearchContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  position: 'relative',
+  zIndex: theme.zIndex.modal,
 }))
 
-const AppBar: React.FC = () => {
+const AutocompleteContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  position: 'absolute',
+  top: 64,
+  backgroundColor: theme.palette.background.paper,
+  borderBottomLeftRadius: 24,
+  borderBottomRightRadius: 24,
+  overflow: 'hidden',
+  zIndex: -1,
+  boxShadow: `0 0 4px 0 ${alpha(theme.palette.text.primary, 0.07)},
+    0 0 16px 0 ${alpha(theme.palette.text.primary, 0.07)}`,
+}))
+
+const AutocompleteItemButton = styled(Button)(({ theme }) => ({
+  borderRadius: '0 !important',
+  padding: theme.spacing(3, 4),
+  gap: theme.spacing(4),
+  justifyContent: 'flex-start',
+}))
+
+type AppBarProps = {
+  search?: string
+}
+
+const AppBar: React.FC<AppBarProps> = ({ search }) => {
   const navigate = useNavigate()
+  const searchHistory = useAppSelector((store) => store.app.searchHistory)
+  const [searchBoxFocused, setSearchBoxFocused] = useState(false)
+
   const handleGoHome = () => {
     navigate('/')
   }
 
+  const handleGoToSearch = () => {
+    navigate('/search')
+  }
+
+  const handleAutocompleteItemClick = (search: string) => {
+    navigate('/search/' + search)
+  }
+
+  const handleSearchBoxFocus = () => {
+    setSearchBoxFocused(true)
+  }
+
+  const handleSearchBoxBlur = () => {
+    setSearchBoxFocused(false)
+  }
+
   return (
     <Root position="static" elevation={0}>
-      <Content>
-        <LogoContainer onClick={handleGoHome}>
-          <StyledLogo />
-          <Title>Ленивый инвестор</Title>
-        </LogoContainer>
-        <EmailContainer visibleOnXL />
-        <Container>
-          <SearchButton variant="secondary">
-            <StyledSearchIcon />
-          </SearchButton>
-          <SearchInput
-            placeholder="Поиск"
-            endAdornment={<StyledSearchIcon />}
+      <LogoContainer onClick={handleGoHome}>
+        <StyledLogo />
+        <Title>Ленивый инвестор</Title>
+      </LogoContainer>
+      <EmailContainer visibleOnXL />
+      <Container>
+        <SearchButton onClick={handleGoToSearch} variant="secondary">
+          <StyledSearchIcon />
+        </SearchButton>
+        <SearchContainer>
+          <StyledSearchBar
+            inputProps={{
+              onFocus: handleSearchBoxFocus,
+              onBlur: handleSearchBoxBlur,
+              className: cx('AppBar__search', {
+                'AppBar__search--focused': searchBoxFocused,
+              }),
+            }}
+            defaultValue={search}
           />
-          <ChannelLinkButton
-            variant="contrast"
-            component={'a'}
-            // @ts-expect-error MUI types bug
-            href="https://t.me/leniviy_investor"
-            rel="noreferrer noopener"
-            target="_blank"
-          >
-            Перейти в канал
-          </ChannelLinkButton>
-        </Container>
-      </Content>
+          {searchBoxFocused && (
+            <AutocompleteContainer>
+              {searchHistory.map((e, i) => (
+                <AutocompleteItemButton
+                  onClick={handleAutocompleteItemClick.bind(null, e)}
+                  key={i}
+                >
+                  <SearchIcon />
+                  {e}
+                </AutocompleteItemButton>
+              ))}
+            </AutocompleteContainer>
+          )}
+        </SearchContainer>
+
+        <Button
+          variant="contrast"
+          hoverVariant="inverse"
+          component={'a'}
+          // @ts-expect-error MUI types bug
+          href="https://t.me/leniviy_investor"
+          rel="noreferrer noopener"
+          target="_blank"
+        >
+          Перейти в канал
+        </Button>
+      </Container>
     </Root>
   )
 }

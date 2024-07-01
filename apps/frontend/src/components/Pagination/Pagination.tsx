@@ -3,7 +3,6 @@ import {
   Pagination as MUIPagination,
   PaginationItemProps,
   PaginationProps,
-  alpha,
   styled,
 } from '@mui/material'
 import Button from '../Button/Button'
@@ -15,10 +14,18 @@ const StyledMUIPagination = styled(MUIPagination)(({ theme }) => ({
     justifyContent: 'space-between',
     width: '100%',
   },
+  '& .MuiPagination-ul li:not(:first-child):not(:last-child)': {
+    display: 'flex',
+    flexGrow: 1,
+  },
   [theme.breakpoints.up('sm')]: {
     width: 'auto',
     '& .MuiPagination-ul': {
       justifyContent: 'flex-start',
+    },
+    '& .MuiPagination-ul li': {
+      display: 'flex',
+      flexGrow: 0,
     },
   },
 }))
@@ -27,23 +34,13 @@ const StyledPaginationItem = styled(Button)(({ theme }) => ({
   '&.PaginationItem': {
     fontSize: 14,
   },
-  '&.Button--contrast': {
-    '&:hover': {
-      color: theme.palette.buttonContrast.color,
-      backgroundColor: alpha(theme.palette.buttonContrast.main, 0.85),
-      boxShadow: 'none',
-    },
-    '&:active': {
-      color: theme.palette.buttonContrast.color,
-      backgroundColor: alpha(theme.palette.buttonContrast.main, 0.63),
-      boxShadow: 'none',
-    },
-  },
   height: 36,
   minWidth: 36,
+  maxWidth: 64,
   borderRadius: 12,
-  padding: 0,
+  padding: '0 !important',
   margin: theme.spacing(0, 0.25),
+  flexGrow: 1,
   [theme.breakpoints.up('sm')]: {
     borderRadius: 16,
     height: 48,

@@ -4,8 +4,8 @@ import React from 'react'
 
 const Root = styled(ButtonBase)(({ theme }) => ({
   ...theme.mixins.button,
-  borderRadius: 20,
-  padding: theme.spacing(2.5, 3),
+  borderRadius: 16,
+  padding: theme.spacing(2, 3),
   gap: theme.spacing(2),
   color: theme.palette.text.primary,
   display: 'flex',
@@ -13,13 +13,19 @@ const Root = styled(ButtonBase)(({ theme }) => ({
   justifyContent: 'center',
   textTransform: 'none',
   fontWeight: 500,
-  fontSize: 14,
-  lineHeight: '21px',
+  fontSize: 16,
+  lineHeight: '24px',
   fontFamily: 'Inter',
   textAlign: 'center',
   backgroundColor: theme.palette.background.default,
   transitionDuration: `${theme.transitions.duration.short}ms`,
+  '&:hover': {
+    color: theme.palette.text.primary,
+    backgroundColor: theme.palette.buttonHint.main,
+  },
   '&:active': {
+    color: theme.palette.text.primary,
+    backgroundColor: alpha(theme.palette.buttonHint.main, 0.07),
     transitionDuration: `${theme.transitions.duration.shortest}ms`,
   },
   '&.Button--fullWidth': {
@@ -50,6 +56,20 @@ const Root = styled(ButtonBase)(({ theme }) => ({
     color: theme.palette.buttonContrast.color,
     backgroundColor: theme.palette.buttonContrast.main,
     boxShadow: '0 0 0 2px inset transparent',
+  },
+  '&.Button--contrast.Button--hoverDefault': {
+    '&:hover': {
+      color: theme.palette.buttonContrast.color,
+      backgroundColor: alpha(theme.palette.buttonContrast.main, 0.85),
+      boxShadow: 'none',
+    },
+    '&:active': {
+      color: theme.palette.buttonContrast.color,
+      backgroundColor: alpha(theme.palette.buttonContrast.main, 0.63),
+      boxShadow: 'none',
+    },
+  },
+  '&.Button--contrast.Button--hoverInverse': {
     '&:hover': {
       color: theme.palette.buttonContrast.colorHovered,
       backgroundColor: 'transparent',
@@ -63,7 +83,9 @@ const Root = styled(ButtonBase)(({ theme }) => ({
   },
   [theme.breakpoints.up('sm')]: {
     fontSize: 20,
-    lineHeight: '30px',
+    lineHeight: '32px',
+    padding: theme.spacing(2, 3),
+    borderRadius: 20,
   },
   '&:disabled': {
     opacity: 0.5,
@@ -72,13 +94,15 @@ const Root = styled(ButtonBase)(({ theme }) => ({
 }))
 
 export type ButtonProps = ButtonBaseProps & {
-  variant?: 'contrast' | 'primary' | 'secondary'
+  variant?: 'default' | 'contrast' | 'primary' | 'secondary'
+  hoverVariant?: 'inverse' | 'default'
   fullWidth?: boolean
 }
 
 const Button: React.FC<ButtonProps> = ({
   className,
-  variant = 'primary',
+  variant = 'default',
+  hoverVariant = 'default',
   fullWidth,
   ...props
 }) => {
@@ -91,6 +115,8 @@ const Button: React.FC<ButtonProps> = ({
         'Button--primary': variant === 'primary',
         'Button--secondary': variant === 'secondary',
         'Button--contrast': variant === 'contrast',
+        'Button--hoverDefault': hoverVariant === 'default',
+        'Button--hoverInverse': hoverVariant === 'inverse',
         'Button--fullWidth': fullWidth,
       })}
     />

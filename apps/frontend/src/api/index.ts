@@ -13,8 +13,11 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: API_URL }),
   endpoints: (builder) => ({
     pulsesGetPage: builder.query<PulseGetPageRes, PulseGetPageReq>({
-      query: ({ page, filter }) =>
-        `pulse/page/${page}${filter ? `?filter=${filter}` : ''}`,
+      query: ({ page, filter }) => ({
+        url: `pulse/page/${page}`,
+        method: 'POST',
+        body: filter,
+      }),
       providesTags: (
         result = { pulses: [], count: 0, pages: 0 },
         _err,

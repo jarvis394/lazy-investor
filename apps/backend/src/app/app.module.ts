@@ -8,8 +8,7 @@ import { BotModule } from '../bot/bot.module'
 import { PulseModule } from '../pulse/pulse.module'
 import { ShareModule } from '../share/share.module'
 import { redisStore } from 'cache-manager-redis-yet'
-import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager'
-import { APP_INTERCEPTOR } from '@nestjs/core'
+import { CacheModule } from '@nestjs/cache-manager'
 import type { RedisClientOptions } from 'redis'
 
 @Module({
@@ -34,6 +33,7 @@ import type { RedisClientOptions } from 'redis'
       useFactory: async (configService: ConfigService) => ({
         store: await redisStore({
           ttl: configService.CACHE_TTL,
+          keyPrefix: configService.REDIS_KEY_PREFIX,
           url: configService.REDIS_URL,
         }),
       }),
@@ -42,13 +42,7 @@ import type { RedisClientOptions } from 'redis'
     PulseModule,
     ShareModule,
   ],
-  providers: [
-    ConfigService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CacheInterceptor,
-    },
-  ],
+  providers: [ConfigService],
   controllers: [AppController],
 })
 export class AppModule {}

@@ -1,31 +1,23 @@
 import React from 'react'
-import { alpha, styled } from '@mui/material'
+import { styled } from '@mui/material'
+import Button, { ButtonProps } from '../Button/Button'
 
-const Root = styled('button')(({ theme }) => ({
+const Root = styled(Button)(({ theme }) => ({
   ...theme.mixins.button,
-  borderRadius: 20,
+  borderRadius: 16,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: theme.spacing(1),
+  padding: theme.spacing(2),
   color: theme.palette.text.primary,
   backgroundColor: theme.palette.background.paper,
   transitionDuration: `${theme.transitions.duration.short}ms`,
-  '&:hover': {
-    backgroundColor: theme.palette.buttonHint.main,
-  },
-  '&:active': {
-    backgroundColor: alpha(theme.palette.buttonHint.main, 0.07),
+  [theme.breakpoints.up('sm')]: {
+    padding: theme.spacing(2.5),
   },
 }))
 
-type IconButtonProps = React.PropsWithChildren &
-  React.DetailedHTMLProps<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    HTMLButtonElement
-  >
-
-const IconButton: React.FC<IconButtonProps> = ({ children, ...props }) => {
+const IconButton: React.FC<ButtonProps> = ({ children, ...props }) => {
   return <Root {...props}>{children}</Root>
 }
 

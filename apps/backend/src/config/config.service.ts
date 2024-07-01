@@ -5,6 +5,7 @@ type EnvSchema = {
   PORT: string
   DATABASE_URL: string
   REDIS_URL: string
+  REDIS_KEY_PREFIX: string
   CACHE_TTL: string
   TELEGRAM_BOT_KEY: string
 }
@@ -25,11 +26,16 @@ export class ConfigService {
     return this.configService.getOrThrow('TELEGRAM_BOT_KEY')
   }
 
+  /** Cache data TTL in milliseconds */
   get CACHE_TTL() {
-    return Number(this.configService.get('CACHE_TTL')) || 60
+    return Number(this.configService.get('CACHE_TTL')) || 60 * 60 * 24 * 1000 // 1 day
   }
 
   get REDIS_URL() {
     return this.configService.getOrThrow('REDIS_URL')
+  }
+
+  get REDIS_KEY_PREFIX() {
+    return this.configService.get('REDIS_KEY_PREFIX') || 'lazy-investor'
   }
 }

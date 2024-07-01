@@ -1,16 +1,29 @@
-import { Controller, Get, Param, Query } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Param,
+  Post,
+  HttpCode,
+} from '@nestjs/common'
 import { PulseService } from './pulse.service'
 import { PulseGetPageRes } from '@app/shared'
+import { PulseGetPageDto } from './dto/pulse-get-page.dto'
 
 @Controller('pulse')
 export class PulseController {
   constructor(private readonly pulseService: PulseService) {}
 
-  @Get('/page/:page')
+  @HttpCode(200)
+  @Post('/page/:page')
   async getPage(
     @Param('page') page: number,
-    @Query('filter') filter: string
+    @Body() filterDto: PulseGetPageDto = {}
   ): Promise<PulseGetPageRes> {
-    return await this.pulseService.getPage(page, filter)
+    if (isNaN(Number(page))) {
+      throw new BadRequestException('Page parameter is not a number')
+    }
+
+    return await this.pulseService.getPage(page, filterDto)
   }
 }

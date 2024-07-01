@@ -1,5 +1,6 @@
 import { processTelegrafChannelMessage } from '@app/shared'
-import { Injectable, Logger } from '@nestjs/common'
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager'
+import { Inject, Injectable, Logger } from '@nestjs/common'
 import { Pulse } from '@prisma/client'
 import { Update as TelegrafUpdate, Message } from '@telegraf/types'
 import { PrismaService } from 'nestjs-prisma'
@@ -14,14 +15,18 @@ export class BotService {
   static SCRAPER_NAME = 'main'
   private readonly logger = new Logger(BotService.name)
 
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
+  ) {}
 
   async savePulse(pulse: PulseWithoutId) {
-    const res = await this.prismaService.pulse.create({
-      data: pulse,
+    return await this.prismaService.pulse.create({
+      data: {
+        ...pulse,
+        telegramId: 9000 + pulse.telegramId,
+      },
     })
-
-    return res
   }
 
   @On('channel_post')
@@ -34,6 +39,8 @@ export class BotService {
 
     const processedMessage = await processTelegrafChannelMessage(message)
 
+    this.logger.debug('Channel post successfully processed')
+
     if (!processedMessage) {
       this.logger.error(
         'Cannot process new post from channel; ignoring post...'
@@ -41,15 +48,23 @@ export class BotService {
       return
     }
 
-    const res = await this.savePulse(processedMessage)
+    let res: Pulse | null = null
+    try {
+      res = await this.savePulse(processedMessage)
+    } catch (e) {
+      this.logger.error('Could not save to DB:' + (e as Error).message)
+    }
+
     this.logger.debug(
-      `Saved pulse to DB (id: ${res.id}, tgId: ${res.telegramId})`
+      `Saved pulse to DB (id: ${res?.id}, tgId: ${res?.telegramId})`
     )
+
+    await this.cacheManager.reset()
 
     await this.prismaService.scraper.update({
       where: { name: BotService.SCRAPER_NAME },
       data: {
-        maxProcessedTelegramId: message.message_id,
+        maxProcessedTelegramId: res?.telegramId,
       },
     })
   }

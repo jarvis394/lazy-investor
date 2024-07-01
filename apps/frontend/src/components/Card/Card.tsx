@@ -234,6 +234,7 @@ const Card: React.FC<CardProps> = ({
         disabled={skeleton}
         rel="noopener noreferrer"
         target="_blank"
+        variant="primary"
         fullWidth
       >
         {skeleton ? (
