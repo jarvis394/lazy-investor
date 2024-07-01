@@ -14,7 +14,7 @@ const StyledMUIPagination = styled(MUIPagination)(({ theme }) => ({
     justifyContent: 'space-between',
     width: '100%',
   },
-  '& .MuiPagination-ul li:not(:first-child):not(:last-child)': {
+  '& .MuiPagination-ul li:not(:first-of-type):not(:last-of-type)': {
     display: 'flex',
     flexGrow: 1,
   },

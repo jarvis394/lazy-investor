@@ -8,6 +8,8 @@ async function bootstrap() {
   const appService = app.get(AppService)
   Logger.log('🚀 Telegram Scraper has started')
   await appService.startScraper()
+  app.close()
+  process.exit()
 }
 
 bootstrap()

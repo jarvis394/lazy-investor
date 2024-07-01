@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    tty: true
+    env_file:
+      - .env
+    ports:
+      - '${PORT}'
+    depends_on:
+      - db
+    command: sh -c "yarn prisma migrate deploy && yarn nx run backend:production"
+    restart: always
+    healthcheck:
+      test: ['CMD', 'pg_isready']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db:
+    image: postgres:16-alpine
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    expose:
+      - '5432'
+    restart: always
+
+  redis:
+    image: redis:latest
+    restart: always
+    expose:
+      - '6379'
+    environment:
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
+
+volumes:
+  pgdata:

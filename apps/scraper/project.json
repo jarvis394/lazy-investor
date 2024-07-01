@@ -25,6 +25,8 @@
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
+        "inspect": false,
+        "watch": false,
         "buildTarget": "scraper:build"
       },
       "configurations": {

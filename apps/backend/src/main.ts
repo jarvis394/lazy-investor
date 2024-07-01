@@ -25,10 +25,10 @@ async function bootstrap() {
   app.setGlobalPrefix(globalPrefix)
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter))
 
-  await app.listen(config.PORT)
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${config.PORT}/${globalPrefix}/v1`
-  )
+  await app.listen(config.PORT, '0.0.0.0')
+  const url = await app.getUrl()
+
+  Logger.log(`🚀 Application is running on: ${url}/${globalPrefix}/v1`)
 }
 
 bootstrap()
