@@ -9,7 +9,7 @@ services:
     env_file:
       - .env
     ports:
-      - '${PORT}'
+      - '${PORT}:${PORT}'
     depends_on:
       - db
     command: sh -c "yarn prisma migrate deploy && yarn nx run backend:production"
