@@ -1,5 +1,10 @@
 import React, { useState } from 'react'
-import { AppBar as AppBarBase, alpha, styled } from '@mui/material'
+import {
+  AppBar as AppBarBase,
+  ClickAwayListener,
+  alpha,
+  styled,
+} from '@mui/material'
 import Logo from '../svg/Logo'
 import Search from '../svg/Search'
 import { APP_MIN_WIDTH } from '../../config/constants'
@@ -149,13 +154,14 @@ const AppBar: React.FC<AppBarProps> = ({ search }) => {
 
   const handleAutocompleteItemClick = (search: string) => {
     navigate('/search/' + search)
+    setSearchBoxFocused(false)
   }
 
   const handleSearchBoxFocus = () => {
     setSearchBoxFocused(true)
   }
 
-  const handleSearchBoxBlur = () => {
+  const handleClickAway = () => {
     setSearchBoxFocused(false)
   }
 
@@ -170,32 +176,33 @@ const AppBar: React.FC<AppBarProps> = ({ search }) => {
         <SearchButton onClick={handleGoToSearch} variant="secondary">
           <StyledSearchIcon />
         </SearchButton>
-        <SearchContainer>
-          <StyledSearchBar
-            inputProps={{
-              onFocus: handleSearchBoxFocus,
-              onBlur: handleSearchBoxBlur,
-              className: cx('AppBar__search', {
-                'AppBar__search--focused':
-                  searchBoxFocused && searchHistory.length !== 0,
-              }),
-            }}
-            defaultValue={search}
-          />
-          {searchBoxFocused && (
-            <AutocompleteContainer>
-              {searchHistory.map((e, i) => (
-                <AutocompleteItemButton
-                  onClick={handleAutocompleteItemClick.bind(null, e)}
-                  key={i}
-                >
-                  <SearchIcon />
-                  {e}
-                </AutocompleteItemButton>
-              ))}
-            </AutocompleteContainer>
-          )}
-        </SearchContainer>
+        <ClickAwayListener onClickAway={handleClickAway}>
+          <SearchContainer>
+            <StyledSearchBar
+              inputProps={{
+                onFocus: handleSearchBoxFocus,
+                className: cx('AppBar__search', {
+                  'AppBar__search--focused':
+                    searchBoxFocused && searchHistory.length !== 0,
+                }),
+              }}
+              defaultValue={search}
+            />
+            {searchBoxFocused && (
+              <AutocompleteContainer>
+                {searchHistory.map((e, i) => (
+                  <AutocompleteItemButton
+                    onClick={handleAutocompleteItemClick.bind(null, e)}
+                    key={i}
+                  >
+                    <SearchIcon />
+                    {e}
+                  </AutocompleteItemButton>
+                ))}
+              </AutocompleteContainer>
+            )}
+          </SearchContainer>
+        </ClickAwayListener>
 
         <Button
           variant="contrast"
