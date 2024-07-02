@@ -6,6 +6,7 @@ import theme from './config/theme'
 import { RouterProvider } from 'react-router-dom'
 import router from './config/router'
 import { Provider } from 'react-redux'
+import { Analytics } from '@vercel/analytics/react'
 import store from './store'
 import dayjs from 'dayjs'
 import 'dayjs/locale/ru'
@@ -20,6 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        <Analytics />
         <RouterProvider router={router} />
       </ThemeProvider>
     </Provider>
