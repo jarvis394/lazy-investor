@@ -107,10 +107,13 @@ const SearchButton = styled(IconButton)(({ theme }) => ({
 }))
 
 const SearchContainer = styled('div')(({ theme }) => ({
-  display: 'flex',
+  display: 'none',
   flexDirection: 'column',
   position: 'relative',
   zIndex: theme.zIndex.modal,
+  [theme.breakpoints.up('sm')]: {
+    display: 'flex',
+  },
 }))
 
 const AutocompleteContainer = styled('div')(({ theme }) => ({
@@ -133,6 +136,15 @@ const AutocompleteItemButton = styled(Button)(({ theme }) => ({
   padding: theme.spacing(3, 4),
   gap: theme.spacing(4),
   justifyContent: 'flex-start',
+}))
+
+const AutocompleteButtonText = styled('p')(() => ({
+  margin: 0,
+  width: '100%',
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  textAlign: 'initial',
 }))
 
 type AppBarProps = {
@@ -197,7 +209,7 @@ const AppBar: React.FC<AppBarProps> = ({ search }) => {
                     key={i}
                   >
                     <SearchIcon />
-                    {e}
+                    <AutocompleteButtonText>{e}</AutocompleteButtonText>
                   </AutocompleteItemButton>
                 ))}
               </AutocompleteContainer>

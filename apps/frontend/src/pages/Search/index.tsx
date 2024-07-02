@@ -30,7 +30,10 @@ const AppBar = styled(AppBarBase)(({ theme }) => ({
   flexDirection: 'row',
   padding: theme.spacing(2.5, 2),
   width: '100%',
-  gap: theme.spacing(2),
+  gap: theme.spacing(1),
+  [theme.breakpoints.up('sm')]: {
+    gap: theme.spacing(2),
+  },
   [theme.breakpoints.up('md')]: {
     padding: theme.spacing(2.5, 5),
   },
@@ -47,6 +50,15 @@ const ListItemButton = styled(Button)(({ theme }) => ({
   padding: theme.spacing(3, 4),
   gap: theme.spacing(4),
   justifyContent: 'flex-start',
+}))
+
+const ListButtonText = styled('p')(() => ({
+  margin: 0,
+  width: '100%',
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  textAlign: 'initial',
 }))
 
 const StyledSearchBar = styled(SearchBar)({
@@ -80,7 +92,7 @@ const Search: React.FC = () => {
             key={i}
           >
             <SearchIcon />
-            {e}
+            <ListButtonText>{e}</ListButtonText>
           </ListItemButton>
         ))}
       </Container>

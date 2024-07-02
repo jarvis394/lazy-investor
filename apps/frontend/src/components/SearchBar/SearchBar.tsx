@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Button from '../Button/Button'
 import { useAppDispatch } from '../../store'
 import { addSearchToHistory } from '../../store/app'
+import { INCORRECT_CHARACTERS_REGEXP } from '@app/shared'
 
 const SEARCH_MIN_LENGTH = 2
 const SEARCH_MAX_LENGTH = 128
@@ -15,7 +16,10 @@ const Root = styled('form')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  gap: theme.spacing(2),
+  gap: theme.spacing(1),
+  [theme.breakpoints.up('sm')]: {
+    gap: theme.spacing(2),
+  },
 }))
 
 const SearchInput = styled(Input)(() => ({
@@ -50,7 +54,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault()
-    const formattedSearch = search.replace(/\W/g, '')
+    const formattedSearch = search
+      .replace(INCORRECT_CHARACTERS_REGEXP, '')
+      .trim()
 
     if (
       formattedSearch.length < SEARCH_MIN_LENGTH ||

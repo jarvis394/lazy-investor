@@ -14,6 +14,7 @@ import {
 } from '../../components/Button/ArrowButton'
 import EmailContainer from '../../components/EmailContainer/EmailContainer'
 import { Pulse } from '@prisma/client'
+import NoResults from '../NoResults'
 
 const ALL_TAGS_KEY = 'all'
 const DEFAULT_GET_LIST_LIMIT = 12
@@ -134,7 +135,7 @@ const Main: React.FC = () => {
   const { page = '1', tag: paramsShareTag, search } = useParams<Props>()
   const navigate = useNavigate()
   const parsedPage = Number(page) || 1
-  const { data, isFetching, isSuccess } = usePulsesGetPageQuery({
+  const { data, isFetching, isError, isSuccess } = usePulsesGetPageQuery({
     page: parsedPage,
     filter: {
       shareTag: paramsShareTag,
@@ -200,13 +201,17 @@ const Main: React.FC = () => {
 
   React.useEffect(() => {
     if (data?.count === 0) {
-      return navigate('/no-results')
+      return
     }
 
     if (isNaN(Number(page)) || (isSuccess && parsedPage > data.pages)) {
       navigate('/404')
     }
   }, [page, isSuccess, data?.pages, parsedPage, navigate, data?.count])
+
+  if (isError || (isSuccess && data.count === 0)) {
+    return <NoResults />
+  }
 
   return (
     <Root>

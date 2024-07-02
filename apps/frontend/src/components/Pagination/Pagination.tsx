@@ -36,7 +36,6 @@ const StyledPaginationItem = styled(Button)(({ theme }) => ({
   },
   height: 36,
   minWidth: 36,
-  maxWidth: 64,
   borderRadius: 12,
   padding: '0 !important',
   margin: theme.spacing(0, 0.25),
