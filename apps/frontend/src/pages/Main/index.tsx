@@ -209,6 +209,13 @@ const Main: React.FC = () => {
     }
   }, [page, isSuccess, data?.pages, parsedPage, navigate, data?.count])
 
+  React.useEffect(() => {
+    if (selectedTag !== paramsShareTag) {
+      setSelectedTag(paramsShareTag || ALL_TAGS_KEY)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paramsShareTag])
+
   if (isError || (isSuccess && data.count === 0)) {
     return <NoResults />
   }
