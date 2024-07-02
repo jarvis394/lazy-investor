@@ -186,6 +186,7 @@ const AppBar: React.FC<AppBarProps> = ({ search }) => {
                     searchBoxFocused && searchHistory.length !== 0,
                 }),
               }}
+              onSubmit={handleClickAway}
               defaultValue={search}
             />
             {searchBoxFocused && (

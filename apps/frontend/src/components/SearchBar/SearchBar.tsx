@@ -40,6 +40,7 @@ type SearchBarProps = {
 const SearchBar: React.FC<SearchBarProps> = ({
   inputProps,
   withSearchButton,
+  onSubmit,
   ...props
 }) => {
   const navigate = useNavigate()
@@ -59,6 +60,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     }
 
     dispatch(addSearchToHistory(formattedSearch))
+    onSubmit?.(e)
     navigate('/search/' + formattedSearch)
   }
 
