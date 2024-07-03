@@ -82,7 +82,7 @@ const EmailContainer: React.FC<EmailContainerProps> = ({
     >
       {ADMIN_EMAIL}
       <IconButton sx={{ width: 56, height: 56 }} onClick={copyEmailToClipboard}>
-        <Fade in={!copied}>
+        <Fade in={!copied} appear={false}>
           <Icon>
             <CopyRight />
           </Icon>
